@@ -16,4 +16,13 @@ class CollegeAdmin(admin.ModelAdmin):
 
 @admin.register(Major)
 class MajorAdmin(admin.ModelAdmin):
-    list_display = ('idx', 'name', )
+    list_display = ('idx', '_get_college', 'name', )
+
+    def _get_college(self, obj):
+        try:
+            college = College.objects.get(majors=obj)
+            return college.name
+        except:
+            return ''
+
+    _get_college.short_description = 'College'

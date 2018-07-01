@@ -73,8 +73,7 @@ class Account(AbstractBaseUser):
 
 class Major(models.Model):
     idx = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255, unique=True)
-    college = models.ForeignKey('College', on_delete=models.SET_NULL, null=True)
+    name = models.CharField(verbose_name='Major', max_length=255, unique=True)
     accounts = models.ManyToManyField(Account, blank=True)
 
     def __str__(self):
@@ -84,6 +83,7 @@ class Major(models.Model):
 class College(models.Model):
     idx = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
+    majors = models.ManyToManyField(Major, blank=True)
 
     def __str__(self):
         return self.name
