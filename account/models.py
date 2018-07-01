@@ -3,9 +3,9 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class AccountManager(BaseUserManager):
-    def create_user(self, account_id, account_type='ST', email, name, password=None):
-        if not student_id:
-            raise ValueError('Users must have a student id')
+    def create_user(self, account_id, email, name, account_type='ST', password=None):
+        if not account_id:
+            raise ValueError('Users must have a account id')
 
         if not email:
             raise ValueError('Users must have an email address')
@@ -44,7 +44,8 @@ class Account(AbstractBaseUser):
     )
 
     idx = models.AutoField(primary_key=True)
-    account_id = models.CharField(max_length=30, unique=True)
+    account_id = models.CharField(verbose_name='Account ID',
+                                  max_length=30, unique=True)
     account_type = models.CharField(max_length=2, choices=ACCOUNT_TYPE_CHOICES)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=60)
@@ -52,6 +53,9 @@ class Account(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
 
     objects = AccountManager()
+
+    USERNAME_FIELD = 'account_id'
+    REQUIRED_FIELDS = ['email', 'name']
 
     def __str__(self):
         return self.account_id
@@ -67,19 +71,19 @@ class Account(AbstractBaseUser):
         return self.is_admin
 
 
-class College(models.Model):
+class Major(models.Model):
     idx = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
-    majors = models.ManyToManyField(Major)
+    college = models.ForeignKey('College', on_delete=models.SET_NULL, null=True)
+    accounts = models.ManyToManyField(Account, blank=True)
 
     def __str__(self):
         return self.name
 
 
-class Major(models.Model):
+class College(models.Model):
     idx = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
-    accounts = models.ManyToManyField(Account)
 
     def __str__(self):
         return self.name
