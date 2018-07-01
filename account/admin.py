@@ -11,7 +11,7 @@ class AccountAdmin(admin.ModelAdmin):
 
 @admin.register(College)
 class CollegeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('idx', 'name',)
 
 
 @admin.register(Major)
